@@ -86,3 +86,13 @@ class FullFarmLanduse(ard.layout.templates.LanduseTemplate):
         outputs["area_tight"] = (
             mp.convex_hull.buffer(lengthscale_layback).area / 1000**2
         )
+
+        # compute the effective spacing assuming a square grid
+        # this is a bit of a hack, but we can compute the effective spacing
+        # by taking the square root of the area and dividing by the square root
+        # of the number of turbines
+        effective_length = np.sqrt(outputs["area_tight"])
+        effective_spacing = effective_length / np.sqrt(self.N_turbines)
+
+        outputs["spacing_effective_primary"] = effective_spacing
+        outputs["spacing_effective_secondary"] = effective_spacing
