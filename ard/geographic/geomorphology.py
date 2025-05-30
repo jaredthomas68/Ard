@@ -9,11 +9,76 @@ import openmdao.api as om
 
 class GeomorphologyGridData:
     """
-    A class to represent gridded geomorphology data for a given wind farm site
-    domain.
+    A class to represent gridded geomorphology data for a given wind farm site domain.
 
-    Represents either bathymetry data for offshore sites or topography data for
-    onshore sites.
+    This class provides functionality to store, validate, and manipulate geomorphology data,
+    which can represent either bathymetry (for offshore sites) or topography (for onshore sites).
+    The data includes spatial coordinates (x, y) and depth or elevation values (z), as well as
+    optional material data for the site.
+
+    Attributes
+    ----------
+    x_data : np.ndarray
+        A 2D numpy array representing the x-coordinates of the geomorphology grid points (in kilometers).
+    y_data : np.ndarray
+        A 2D numpy array representing the y-coordinates of the geomorphology grid points (in kilometers).
+    z_data : np.ndarray
+        A 2D numpy array representing the depth or elevation values at each grid point (in meters).
+    x_material_data : np.ndarray
+        A 2D numpy array representing the x-coordinates of material data points (in kilometers).
+    y_material_data : np.ndarray
+        A 2D numpy array representing the y-coordinates of material data points (in kilometers).
+    material_data : np.ndarray
+        A 2D numpy array representing the material type at each grid point (e.g., "soil").
+    sea_level : float
+        The sea level reference value (in meters). Defaults to 0.0.
+    _interpolator_device : object
+        A placeholder for the interpolation device used for depth evaluation. Defaults to None.
+
+    Methods
+    -------
+    check_valid_geomorphology()
+        Validates the geomorphology data to ensure that the x, y, and z arrays are 2D and have matching shapes.
+    check_valid_material()
+        Validates the material data to ensure that the x, y, and material arrays are 2D and have matching shapes.
+    get_shape()
+        Returns the shape of the geomorphology data (z_data).
+    get_material_shape()
+        Returns the shape of the material data (material_data).
+    set_data_values(x_data_in, y_data_in, z_data_in)
+        Sets the values of the geomorphology data (x, y, z) and validates the input.
+    set_material_values(x_material_data_in, y_material_data_in, material_data_in)
+        Sets the values of the material data (x, y, material) and validates the input.
+    get_z_data()
+        Returns the depth or elevation values (z_data).
+    get_material_data()
+        Returns the material data (material_data).
+    evaluate(x_query, y_query, return_derivs=False, interp_method="spline")
+        Evaluates the depth or elevation at specified query points using interpolation.
+        Optionally returns derivatives with respect to x and y.
+
+    Notes
+    -----
+    - This class is designed to handle both offshore and onshore geomorphology data.
+    - For offshore sites, z_data typically represents bathymetry (negative values for depth below sea level).
+    - For onshore sites, z_data typically represents topography (positive values for elevation above sea level).
+    - Material data is optional and can represent soil types, bedrock, or other site-specific characteristics.
+    - The interpolation functionality currently supports smooth bivariate spline interpolation.
+
+    Examples
+    --------
+    Initialize and set geomorphology data:
+    >>> geomorphology = GeomorphologyGridData()
+    >>> x_data = np.array([[0.0, 1.0], [0.0, 1.0]])
+    >>> y_data = np.array([[0.0, 0.0], [1.0, 1.0]])
+    >>> z_data = np.array([[10.0, 20.0], [30.0, 40.0]])
+    >>> geomorphology.set_data_values(x_data, y_data, z_data)
+
+    Query depth at specific points:
+    >>> x_query = np.array([0.5])
+    >>> y_query = np.array([0.5])
+    >>> depth = geomorphology.evaluate(x_query, y_query)
+    >>> print(depth)
     """
 
     # alias for meshed data, and promote dimension to 2
