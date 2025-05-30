@@ -657,3 +657,48 @@ def get_closest_point_on_line_seg(
 
 
 get_closest_point_on_line_seg = jax.jit(get_closest_point_on_line_seg)
+
+# custom length calculation
+def distance_function(x0: float, y0: float, x1: float, y1: float):
+    """
+    Calculate the Euclidean distance between two points in 2D space.
+
+    Args:
+        x0 (float): x-coordinate of the first point.
+        y0 (float): y-coordinate of the first point.
+        x1 (float): x-coordinate of the second point.
+        y1 (float): y-coordinate of the second point.
+
+    Returns:
+        float: Euclidean distance between the two points.
+    """
+
+    return ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5
+
+
+def distance_function_deriv(x0: float, y0: float, x1: float, y1: float):
+    """
+    Calculate the partial derivatives of the Euclidean distance function
+    with respect to the coordinates of two points in 2D space.
+
+    Args:
+        x0 (float): x-coordinate of the first point.
+        y0 (float): y-coordinate of the first point.
+        x1 (float): x-coordinate of the second point.
+        y1 (float): y-coordinate of the second point.
+
+    Returns:
+        np.ndarray: Array containing the partial derivatives:
+            - Derivative with respect to x0.
+            - Derivative with respect to y0.
+            - Derivative with respect to x1.
+            - Derivative with respect to y1.
+    """
+    return np.array(
+        [
+            ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** (-0.5) * (x1 - x0),
+            ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** (-0.5) * (y1 - y0),
+            -(((x1 - x0) ** 2 + (y1 - y0) ** 2) ** (-0.5)) * (x1 - x0),
+            -(((x1 - x0) ** 2 + (y1 - y0) ** 2) ** (-0.5)) * (y1 - y0),
+        ]
+    )

@@ -16,6 +16,7 @@ from optiwindnet.plotting import gplot
 import ard.utils.io
 import ard.utils.test_utils
 import ard.collection.optiwindnet_wrap as ard_own
+import ard.utils.geometry as geo
 
 
 @pytest.mark.usefixtures("subtests")
@@ -126,7 +127,7 @@ class TestOptiWindNetCollection:
             with subtests.test(f"edge: {idx_edge}"):
                 lengths.append(edges[edge]["length"])
                 assert np.isclose(
-                    edges[edge]["length"], ard_own.distance_function(x0, y0, x1, y1)
+                    edges[edge]["length"], geo.distance_function(x0, y0, x1, y1)
                 )
 
     def test_modeling(self, subtests):

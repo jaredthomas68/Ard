@@ -10,27 +10,11 @@ from optiwindnet.MILP import pyomo as own_pyomo
 from pyomo import environ as pyo
 
 import ard.collection.templates as templates
+import ard.utils.geometry as geo
 
 import logging
 
 logging.getLogger("optiwindnet").setLevel(logging.CRITICAL)
-
-
-# custom length calculation
-def distance_function(x0, y0, x1, y1):
-    return ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** 0.5
-
-
-def distance_function_deriv(x0, y0, x1, y1):
-    return np.array(
-        [
-            ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** (-0.5) * (x1 - x0),
-            ((x1 - x0) ** 2 + (y1 - y0) ** 2) ** (-0.5) * (y1 - y0),
-            -(((x1 - x0) ** 2 + (y1 - y0) ** 2) ** (-0.5)) * (x1 - x0),
-            -(((x1 - x0) ** 2 + (y1 - y0) ** 2) ** (-0.5)) * (y1 - y0),
-        ]
-    )
-
 
 def optiwindnet_wrapper(
     XY_turbines: np.ndarray,
@@ -134,34 +118,6 @@ class optiwindnetCollection(templates.CollectionTemplate):
     A component class to make a heuristic-based optimized energy collection and
     management system using optiwindnet! Inherits the interface from
     `templates.CollectionTemplate`.
-
-    Options
-    -------
-    modeling_options : dict
-
-    Inputs
-    ------
-    x_turbines : np.ndarray
-        a 1D numpy array indicating the x-dimension locations of the turbines,
-        with length `N_turbines`
-    y_turbines : np.ndarray
-        a 1D numpy array indicating the y-dimension locations of the turbines,
-        with length `N_turbines`
-    x_substations : np.ndarray
-        a 1D numpy array indicating the x-dimension locations of the substations,
-        with length `N_substations`
-    y_substations : np.ndarray
-        a 1D numpy array indicating the y-dimension locations of the substations,
-        with length `N_substations`
-
-    Outputs
-    -------
-    length_cables : np.ndarray
-        a 1D numpy array that holds the lengths of all of the cables necessary to
-        collect energy generated
-    load_cables : np.ndarray
-        a 1D numpy array that holds the load integer (i.e. total number of
-        turbines) collected up to this point of the cable
     """
 
     def initialize(self):
@@ -246,14 +202,10 @@ class optiwindnetCollection(templates.CollectionTemplate):
         # re-load the key variables back as locals
         XY_turbines = np.vstack([inputs["x_turbines"], inputs["y_turbines"]]).T
         XY_substations = np.vstack([inputs["x_substations"], inputs["y_substations"]]).T
-        # print(self.graph)
+        
         H = self.graph
         edges = H.edges()
 
-        # J["length_cables", "x_turbines"] = 0.0
-        # J["length_cables", "y_turbines"] = 0.0
-        # J["length_cables", "x_substations"] = 0.0
-        # J["length_cables", "y_substations"] = 0.0
         J["total_length_cables", "x_turbines"] = 0.0
         J["total_length_cables", "y_turbines"] = 0.0
         J["total_length_cables", "x_substations"] = 0.0
@@ -273,20 +225,12 @@ class optiwindnetCollection(templates.CollectionTemplate):
             )
 
             # get the derivative function
-            dLdx0, dLdy0, dLdx1, dLdy1 = distance_function_deriv(x0, y0, x1, y1)
+            dLdx0, dLdy0, dLdx1, dLdy1 = geo.distance_function_deriv(x0, y0, x1, y1)
 
             if e0 >= 0:
-                # J["length_cables", "x_turbines"][idx_edge, e0] -= dLdx0
-                # J["length_cables", "y_turbines"][idx_edge, e0] -= dLdy0
                 J["total_length_cables", "x_turbines"][0, e0] -= dLdx0
                 J["total_length_cables", "y_turbines"][0, e0] -= dLdy0
             else:
-                # J["length_cables", "x_substations"][
-                #     idx_edge, self.N_substations + e0
-                # ] -= dLdx0
-                # J["length_cables", "y_substations"][
-                #     idx_edge, self.N_substations + e0
-                # ] -= dLdy0
                 J["total_length_cables", "x_substations"][
                     0, self.N_substations + e0
                 ] -= dLdx0
@@ -294,17 +238,9 @@ class optiwindnetCollection(templates.CollectionTemplate):
                     0, self.N_substations + e0
                 ] -= dLdy0
             if e1 >= 0:
-                # J["length_cables", "x_turbines"][idx_edge, e1] -= dLdx1
-                # J["length_cables", "y_turbines"][idx_edge, e1] -= dLdy1
                 J["total_length_cables", "x_turbines"][0, e1] -= dLdx1
                 J["total_length_cables", "y_turbines"][0, e1] -= dLdy1
             else:
-                # J["length_cables", "x_substations"][
-                #     idx_edge, self.N_substations + e1
-                # ] -= dLdx1
-                # J["length_cables", "y_substations"][
-                #     idx_edge, self.N_substations + e1
-                # ] -= dLdy1
                 J["total_length_cables", "x_substations"][
                     0, self.N_substations + e1
                 ] -= dLdx1
