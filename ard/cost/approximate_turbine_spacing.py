@@ -6,9 +6,32 @@ class LandBOSSEWithSpacingApproximations(om.Group):
     """
     OpenMDAO group that connects the SpacingApproximations component to the LandBOSSE component.
 
-    This group calculates the turbine spacing using the SpacingApproximations and passes it
-    to the LandBOSSE component for further cost estimation.
+    This group calculates turbine and row spacing approximations based on total cable length using the 
+    SpacingApproximations component and passes them to the LandBOSSE component for cost estimation.
+
+    The group interfaces with OpenMDAO as though it were the LandBOSSE component, exposing all outputs
+    from LandBOSSE directly.
+
+    Inputs
+    ------
+    total_length_cables : float
+        Total length of cables in meters.
+
+    Outputs
+    -------
+    All outputs from the LandBOSSE component are exposed directly at the group level.
+
+    Options
+    -------
+    modeling_options : dict
+        Dictionary of modeling options including at least ["farm"]["N_turbines"] and ["turbine"]["geometry"]["diameter_rotor"].
+
+    Connections
+    -----------
+    - Connects the primary turbine spacing output from SpacingApproximations to the internal turbine spacing input of LandBOSSE.
+    - Connects the secondary turbine spacing output from SpacingApproximations to the internal row spacing input of LandBOSSE.
     """
+
 
     def initialize(self):
         """Initialize the group and declare options."""
