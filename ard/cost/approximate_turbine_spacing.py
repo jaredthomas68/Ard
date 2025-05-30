@@ -81,7 +81,9 @@ class LandBOSSEWithSpacingApproximations(om.Group):
 class SpacingApproximations(om.ExplicitComponent):
     """
     OpenMDAO component to calculate approximations for turbine spacing based on the total length of cables
-    and the number of wind turbines.
+    and the number of wind turbines. This approximation is to all cable costs in landbosse to more accurately
+    reflect the true cable costs since landbosse does not allow for custom cable designs, but rather assumes
+    a grid in all cases.
 
     Inputs
     ------
