@@ -106,7 +106,7 @@ class ConstantDepthMooringDesign(om.ExplicitComponent):
     y_turbines : np.ndarray
         a 1D numpy array indicating the y-dimension locations of the turbines,
         with length `N_turbines` (mirrored w.r.t. `FarmAeroTemplate`)
-    thrust_turbines : np.ndarray
+    (optional) thrust_turbines : np.ndarray 
         an array of the wind turbine thrust for each of the turbines in the farm
         across all of the conditions that have been queried on the wind rose
         (`N_turbines`, `N_wind_conditions`)
@@ -164,7 +164,6 @@ class ConstantDepthMooringDesign(om.ExplicitComponent):
                 np.zeros((self.N_turbines, self.N_wind_conditions)),
                 units="kN",
             )  # turbine thrust coming from each wind direction
-        # ADD ADDITIONAL (DESIGN VARIABLE) INPUTS HERE!!!!!
 
         self.add_output(
             "x_anchors",
@@ -189,9 +188,6 @@ class ConstantDepthMooringDesign(om.ExplicitComponent):
         phi_platform = inputs["phi_platform"]
         x_turbines = inputs["x_turbines"]
         y_turbines = inputs["y_turbines"]
-        # thrust_turbines = inputs["thrust_turbines"]  #
-
-        # BEGIN: REPLACE ME
 
         x_anchors, y_anchors = simple_mooring_design(
             phi_platform=phi_platform,
@@ -201,8 +197,6 @@ class ConstantDepthMooringDesign(om.ExplicitComponent):
             N_turbines=self.N_turbines,
             N_anchors=self.N_anchors,
         )
-
-        # END REPLACE ME
 
         # replace the below with the final anchor locations...
         outputs["x_anchors"] = x_anchors
