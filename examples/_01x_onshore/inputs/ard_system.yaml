@@ -144,6 +144,8 @@ analysis_options:
     name: ScipyOptimizeDriver
     options:
       optimizer: "COBYLA"
+      opt_settings:
+        rhobeg: 500
 
   design_variables:
     spacing_primary:
