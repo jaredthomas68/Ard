@@ -232,24 +232,6 @@ def set_up_system_recursive(
                     prob.add_recorder(recorder)
                     prob.driver.add_recorder(recorder)
 
-        prob.setup()
-
-    if _depth == 0:
-        # setup the latent variables for LandBOSSE/ORBIT and FinanceSE
-        if any(
-            "orbit" in var[0]
-            for var in prob.model.list_vars(val=False, out_stream=None)
-        ):
-            ORBIT_setup_latents(prob, modeling_options)
-        # if any(
-        #     "landbosse" in var[0]
-        #     for var in prob.model.list_vars(val=False, out_stream=None)
-        # ):
-        #     LandBOSSE_setup_latents(prob, modeling_options)
-        if any(
-            "financese" in var[0]
-            for var in prob.model.list_vars(val=False, out_stream=None)
-        ):
-            FinanceSE_setup_latents(prob, modeling_options)
+        prob.setup() #TODO make running setup optional
 
     return prob

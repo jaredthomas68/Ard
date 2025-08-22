@@ -45,8 +45,8 @@ modeling_options: &modeling_options
 system:
   type: group
   connections: {}
-    # - ["AEP_farm", "financese.plant_aep_in"]
-    # - ["total_capex_kW", "financese.bos_per_kW"]
+    - ["AEP_farm", "financese.plant_aep_in"]
+    - ["total_capex_kW", "financese.bos_per_kW"]
   systems:
     layout2aep:
       type: group
@@ -101,43 +101,43 @@ system:
       promotes: ["*"]
       kwargs:
         modeling_options: *modeling_options
-    # tcc:
-    #   type: component
-    #   module: ard.cost.wisdem_wrap
-    #   object: TurbineCapitalCosts
-    #   promotes: [
-    #     "turbine_number",
-    #     "machine_rating",
-    #     "tcc_per_kW",
-    #     "offset_tcc_per_kW",
-    #   ]
-    # landbosse:
-    #   type: component
-    #   module: ard.cost.wisdem_wrap
-    #   object: LandBOSSEWithSpacingApproximations
-    #   promotes: ["*"]
-    #   kwargs:
-    #     modeling_options: *modeling_options
-    # opex:
-    #   type: component
-    #   module: ard.cost.wisdem_wrap
-    #   object: OperatingExpenses
-    #   promotes: [
-    #     "turbine_number",
-    #     "machine_rating",
-    #     "opex_per_kW"
-    #   ]
-    # financese:
-    #   type: component
-    #   module: ard.cost.wisdem_wrap
-    #   object: PlantFinance
-    #   promotes: [
-    #     "turbine_number",
-    #     "machine_rating",
-    #     "tcc_per_kW",
-    #     "offset_tcc_per_kW",
-    #     "opex_per_kW",
-    #   ]
+    tcc:
+      type: component
+      module: ard.cost.wisdem_wrap
+      object: TurbineCapitalCosts
+      promotes: [
+        "turbine_number",
+        "machine_rating",
+        "tcc_per_kW",
+        "offset_tcc_per_kW",
+      ]
+    landbosse:
+      type: component
+      module: ard.cost.wisdem_wrap
+      object: LandBOSSEWithSpacingApproximations
+      promotes: ["*"]
+      kwargs:
+        modeling_options: *modeling_options
+    opex:
+      type: component
+      module: ard.cost.wisdem_wrap
+      object: OperatingExpenses
+      promotes: [
+        "turbine_number",
+        "machine_rating",
+        "opex_per_kW"
+      ]
+    financese:
+      type: component
+      module: ard.cost.wisdem_wrap
+      object: PlantFinance
+      promotes: [
+        "turbine_number",
+        "machine_rating",
+        "tcc_per_kW",
+        "offset_tcc_per_kW",
+        "opex_per_kW",
+      ]
 
 analysis_options:
   driver:
