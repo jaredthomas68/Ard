@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
+import openmdao.api as om
+
 import windIO
 
 from ard.utils.io import load_yaml
@@ -39,7 +41,7 @@ print(
     f"total cable length: {prob.get_val('optiwindnet_coll.total_length_cables', units='km')[0]} km"
 )
 print(f"boundary distances: {prob.get_val('boundary_distances', units='km')}")
-
+# om.n2(prob)
 run_optimize = True
 if run_optimize:
     # run the driver
