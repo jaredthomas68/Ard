@@ -205,12 +205,14 @@ class TestDistancePointToPolygonRayCasting:
 
         polygon = np.array([[0.0, 0.2], [0.8, 1.0], [0.0, 1.0]])
 
-        for idx_point, (point, expected_distance) in enumerate([
-            (np.array([0.2, 0.6]), -0.14142135623730953),
-            (np.array([0.4, 0.8]), -0.14142135623730953),
-            (np.array([0.8, 0.8]), 0.14142135623730953),
-        ]):
-            
+        for idx_point, (point, expected_distance) in enumerate(
+            [
+                (np.array([0.2, 0.6]), -0.14142135623730953),
+                (np.array([0.4, 0.8]), -0.14142135623730953),
+                (np.array([0.8, 0.8]), 0.14142135623730953),
+            ]
+        ):
+
             with subtests.test(f"point {idx_point}"):
                 test_result = geo_utils.distance_point_to_polygon_ray_casting(
                     point, vertices=polygon
