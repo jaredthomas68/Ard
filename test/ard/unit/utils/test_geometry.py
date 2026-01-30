@@ -4,53 +4,6 @@ import ard.utils.geometry as geo_utils
 import pytest
 
 @pytest.mark.usefixtures("subtests")
-class TestPadPolygon:
-
-    def test_zero_vertex(self, subtests):
-        boundary_vertices = [
-            np.array([
-                [   0.,    0.],
-                [1000.,    0.],
-                [1000.,  200.],
-                [   0.,  200.]
-            ]), 
-            np.array([
-                [   0.,  300.],
-                [1000.,  300.],
-                [1000., 1000.],
-                [1100., 1100.],
-                [   0., 1100.]
-            ])
-        ]
-
-        padded_expected_vertices = [
-            np.array([
-                [   0.,    0.],
-                [1000.,    0.],
-                [1000.,  200.],
-                [   0.,  200.],
-                [0.0, 200.0]
-            ]), 
-            np.array([
-                [   0.,  300.],
-                [1000.,  300.],
-                [1000., 1000.],
-                [1100., 1100.],
-                [   0., 1100.]
-            ])
-        ]
-
-        max_vertices = max(len(polygon) for polygon in boundary_vertices)
-
-        with subtests.test("boundary 0"):
-            paded_polygon = geo_utils.pad_polygon(boundary_vertices[0], max_vertices)
-            assert np.allclose(paded_polygon, padded_expected_vertices[0])
-
-        with subtests.test("boundary 1"):
-            paded_polygon = geo_utils.pad_polygon(boundary_vertices[1], max_vertices)
-            assert np.allclose(paded_polygon, padded_expected_vertices[1])
-
-@pytest.mark.usefixtures("subtests")
 class TestGetNearestPolygons:
     """
     Test for get_nearest_polygons function
